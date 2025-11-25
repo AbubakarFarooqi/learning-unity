@@ -6,7 +6,9 @@ public class PlayerScript : MonoBehaviour
     private const string WALK_ANIMATION = "Walk";
     private float moveX;
     [SerializeField]
-    private float moitionForce;
+    private float motionForce;
+    [SerializeField]
+    private float jumpForce = 10f;
     [SerializeField]
     private Rigidbody2D rigidbody2D;
     [SerializeField]
@@ -25,6 +27,7 @@ public class PlayerScript : MonoBehaviour
     {
         WalkPlayer();
         WalkAnimation();
+        JumpPlayer();
     }
 
     void WalkPlayer()
@@ -37,7 +40,7 @@ public class PlayerScript : MonoBehaviour
         {
             this.moveX = 0;
         }
-        this.transform.position += new Vector3(moveX,0,0) *  this.moitionForce * Time.deltaTime;
+        this.transform.position += new Vector3(moveX,0,0) *  this.motionForce * Time.deltaTime;
     }
     void WalkAnimation()
     {
@@ -56,6 +59,14 @@ public class PlayerScript : MonoBehaviour
         {
             this.animator.SetBool(WALK_ANIMATION,false);
             
+        }
+    }
+
+    void JumpPlayer()
+    {
+        if (Keyboard.current.spaceKey.isPressed)
+        {
+            this.rigidbody2D.AddForce(new Vector2(0f,this.jumpForce));
         }
     }
 }
