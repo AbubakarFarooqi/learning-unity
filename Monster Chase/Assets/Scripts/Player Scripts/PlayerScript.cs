@@ -6,6 +6,7 @@ public class PlayerScript : MonoBehaviour
 {
     // CONSTANTS
     private const string WALK_ANIMATION = "Walk";
+    private const string JUMP_ANIMATION = "Jump";
     private const string IS_GROUND_TAG = "Ground";
 
     private float moveX;
@@ -40,7 +41,8 @@ public class PlayerScript : MonoBehaviour
         WalkPlayer();
         WalkAnimation();
         JumpPlayer();
-        
+        this.animator.SetBool(JUMP_ANIMATION,!isGrounded);
+
         
     }
 
