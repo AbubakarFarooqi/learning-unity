@@ -1,16 +1,25 @@
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerScript : MonoBehaviour
 {
+    // CONSTANTS
     private const string WALK_ANIMATION = "Walk";
+    private const string IS_GROUND_TAG = "Ground";
+
     private float moveX;
     [SerializeField]
     private float motionForce;
     [SerializeField]
-    private float jumpForce = 10f;
+    private float jumpForce;
+    private bool isGrounded = true;
+
+
+
+
     [SerializeField]
-    private Rigidbody2D rigidbody2D;
+    private Rigidbody2D myBody;
     [SerializeField]
     private SpriteRenderer spriteRenderer;
     [SerializeField]
@@ -20,14 +29,19 @@ public class PlayerScript : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        this.myBody.gravityScale = 5;
+        this.motionForce = 8.5f;
+        this.jumpForce = 16f;
+        
     }
-
     // Update is called once per frame
     void Update()
     {
         WalkPlayer();
         WalkAnimation();
         JumpPlayer();
+        
+        
     }
 
     void WalkPlayer()
@@ -64,9 +78,17 @@ public class PlayerScript : MonoBehaviour
 
     void JumpPlayer()
     {
-        if (Keyboard.current.spaceKey.isPressed)
+        if (Keyboard.current.spaceKey.wasPressedThisFrame && this.isGrounded)
         {
-            this.rigidbody2D.AddForce(new Vector2(0f,this.jumpForce));
+            this.isGrounded = false;
+            this.myBody.AddForce(new Vector2(0f,this.jumpForce),ForceMode2D.Impulse);
         }
     }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag(IS_GROUND_TAG))
+            this.isGrounded = true;
+    }
+
 }
