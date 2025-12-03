@@ -1,3 +1,4 @@
+using System;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,17 +9,16 @@ public class PlayerScript : MonoBehaviour
     private const string WALK_ANIMATION = "Walk";
     private const string JUMP_ANIMATION = "Jump";
     private const string IS_GROUND_TAG = "Ground";
-
+    private bool isGrounded = true;
+    private bool isBulletOnScreen = false;
     private float moveX;
+
     [SerializeField]
     private float motionForce;
     [SerializeField]
     private float jumpForce;
-    private bool isGrounded = true;
-
-
-
-
+    [SerializeField]
+    private GameObject bulletReference;
     [SerializeField]
     private Rigidbody2D myBody;
     [SerializeField]
@@ -34,6 +34,11 @@ public class PlayerScript : MonoBehaviour
         this.motionForce = 8.5f;
         
     }
+    void Awake()
+    {
+        BulletScript.OnEnemyHit += HandleBulletHitEnemy;
+        BulletScript.onDestoryBullet += HandleBulletDestroy;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -41,6 +46,7 @@ public class PlayerScript : MonoBehaviour
         WalkAnimation();
         JumpPlayer();
         this.animator.SetBool(JUMP_ANIMATION,!isGrounded);
+        ShootBullet();
 
         
     }
@@ -92,4 +98,41 @@ public class PlayerScript : MonoBehaviour
             this.isGrounded = true;
     }
 
+    void ShootBullet()
+    {
+        
+        if (!isBulletOnScreen && Mouse.current.leftButton.IsPressed())
+        {
+            Debug.LogWarning("MOuse clicked");
+            var bullet = Instantiate(bulletReference);
+            isBulletOnScreen = true;
+
+            if (!spriteRenderer.flipX)
+            {
+                bullet.transform.position = new Vector2(this.GetComponent<CapsuleCollider2D>().bounds.center.x+this.GetComponent<CapsuleCollider2D>().bounds.extents.x+0.5f,this.GetComponent<CapsuleCollider2D>().bounds.center.y );
+                bullet.GetComponent<SpriteRenderer>().flipX = true;
+                bullet.GetComponent<BulletScript>().speed = 10f;
+            }
+            else
+            {
+                bullet.transform.position = new Vector2(this.GetComponent<CapsuleCollider2D>().bounds.center.x-this.GetComponent<CapsuleCollider2D>().bounds.extents.x-0.5f,this.GetComponent<CapsuleCollider2D>().bounds.center.y );
+                bullet.GetComponent<BulletScript>().speed = -10f;
+                
+            }
+           
+            
+            // Debug.Log("x: "+this.transform.position.x.ToString());
+            // Debug.Log("width: "+this.GetComponent<CapsuleCollider2D>().bounds.size.x.ToString());
+            // Debug.Log("y: "+this.transform.position.y.ToString());
+        }
+    }
+
+    void HandleBulletHitEnemy(int score)
+    {
+        isBulletOnScreen = false;
+    }
+    void HandleBulletDestroy()
+    {
+        isBulletOnScreen = false;
+    }
 }
