@@ -32,7 +32,6 @@ public class PlayerScript : MonoBehaviour
     {
         this.myBody.gravityScale = 5;
         this.motionForce = 8.5f;
-        this.jumpForce = 16f;
         
     }
     // Update is called once per frame
