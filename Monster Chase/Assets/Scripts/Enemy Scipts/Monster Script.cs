@@ -14,7 +14,7 @@ public class MonsterScript : MonoBehaviour
     void Awake()
     {
         this.myBody = GetComponent<Rigidbody2D>();
-        this.speed = -6;
+        this.speed = 6;
     }
 
     // Update is called once per frame
